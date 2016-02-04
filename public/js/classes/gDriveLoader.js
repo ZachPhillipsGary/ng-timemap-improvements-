@@ -14,8 +14,8 @@ function gDriveLoader(key,onComplete,parent) {
 "category" : "gsx$category",
 "endDate" : "gsx$enddate",
 "startDate" : "gsx$startdate",
-"type" : "gsx$type"
-
+"format": "gsx$format",
+"image": "gsx$image"
   };
 
   function toMapObject(gdriveentry) {
@@ -34,18 +34,19 @@ function gDriveLoader(key,onComplete,parent) {
       {
       */
       var entry = gdriveentry[String(schema[property])];
-       object[property] = entry['$t']; 
+        if (typeof entry != 'undefined')
+            object[property] = entry['$t']; 
     }
     /*
   Determine object type and construct timemap object
     */
     if ((object.itemtype.trim() === "marker") || (object.itemtype.trim() === "↵marker")) {
-     return new MapObject(object["latitude"], object["longitude"], object["title"], object["startDate"].split('/'), object["endDate"].split('/'), 'icon', object["tags"].split(','), object["html"]);
+     return new MapObject(object["latitude"], object["longitude"], object["title"], object["startDate"].split('/'), object["endDate"].split('/'), object['image'], object["tags"].split(','), object["html"]);
     } else {
       if ((object.itemtype.trim() === "layer") || (object.itemtype.trim() === "↵layer")) {
-        return new RemoteLayer(object["html"], RemoteLayer(object["type"]), object["title"], object["startDate"].split('/'),  object["endDate"].split('/'),object["tags"].split(','), guid());
+        return new RemoteLayer(object["html"], object["format"], object["title"], object["startDate"].split('/'),  object["endDate"].split('/'),object["tags"].split(','), guid());
       }
-      var output = '';
+    var output = '';
     for (var property in gdriveentry) {
        output += property + ': ' + gdriveentry[property]['$t']+'; \n';
       }     
@@ -68,8 +69,9 @@ var jqxhr = jQuery.get( string, function() {
           var convertRow = toMapObject(data.feed.entry[i]);
           if(convertRow.constructor.name === "MapObject") {
             /* Construct a category */
+            console.log(convertRow)
             if(typeof categories[convertRow.title] === 'undefined')
-              categories[convertRow.title] = new Category([convertRow],String(convertRow.category));
+              categories[convertRow.title] = new Category([convertRow],String(convertRow.category),convertRow.icon);
             else if(convertRow.constructor.name === "Category")
               categories[convertRow.title].add(convertRow)
             /* Remote layers are themselves categories */

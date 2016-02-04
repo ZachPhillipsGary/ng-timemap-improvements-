@@ -17,7 +17,7 @@ methods:
     vectorSource: returns ol.Source.Vector object with geojson features.
 */
 
-function RemoteLayer(url, type, title, startDate, endDate,tags, uniqueid) {
+function RemoteLayer(url, type, title, startDate, endDate, tags, uniqueid) {
     /* Check that remote file exists and is of proper format*/
     if( !((typeof type ===  "string") && ( (type === 'GeoJSON') || (type === 'KML') ) ))
             alert('Error:'+title+"is an invalid type.")
@@ -35,7 +35,7 @@ function RemoteLayer(url, type, title, startDate, endDate,tags, uniqueid) {
     this.tags = tags || [];
     this.url = url;
     this.url = this.url.split("//")[1];
-    var proxyURL = "http://"+window.location.hostname.split(":")[0] + ":9251/";
+    var proxyURL = "http://"+window.location.hostname.split(":")[0] + ":9251/"; //pass URL to the CORS proxy
     this.url = proxyURL + this.url;
     console.log(this.url);
     this.type = type || "invalid";
@@ -53,12 +53,12 @@ function RemoteLayer(url, type, title, startDate, endDate,tags, uniqueid) {
     this.vectorSource = function() {
     if(this.type === 'GeoJSON')
         return new ol.source.Vector({
-          url: this.url,
+        url: this.url,
         format: new ol.format.GeoJSON()
         });
     if (this.type === 'KML')
         return new ol.source.Vector({
-          url: this.url,
+        url: this.url,
         format: new ol.format.KML()
         });
     }
@@ -69,7 +69,7 @@ function RemoteLayer(url, type, title, startDate, endDate,tags, uniqueid) {
     if(this.type === 'KML') 
         return new ol.layer.Vector({
         source: new ol.source.Vector({
-         extractStyles: true,  //use built in styles
+           extractStyles: true,  //use built in styles
           url: this.url,
           format: new ol.format.KML()
         })
@@ -78,7 +78,7 @@ function RemoteLayer(url, type, title, startDate, endDate,tags, uniqueid) {
     if(this.type === 'GeoJSON')
         return  new ol.layer.Vector({
         source: new ol.source.Vector({
-          extractStyles: true,  //use built in styles
+          extractStyles: true,
           url: this.url,
           format: new ol.format.GeoJSON()
         })
