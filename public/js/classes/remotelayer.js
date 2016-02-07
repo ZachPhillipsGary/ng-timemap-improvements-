@@ -35,7 +35,7 @@ function RemoteLayer(url, type, title, startDate, endDate, tags, uniqueid) {
     this.tags = tags || [];
     this.url = url;
     this.url = this.url.split("//")[1];
-    var proxyURL = "http://"+window.location.hostname.split(":")[0] + ":9251/"; //pass URL to the CORS proxy
+    var proxyURL = "http://"+window.location.hostname.split(":")[0] + ":9251/"; //pass URL to the local CORS proxy
     this.url = proxyURL + this.url;
     console.log(this.url);
     this.type = type || "invalid";
