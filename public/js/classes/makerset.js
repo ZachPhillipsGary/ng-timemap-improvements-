@@ -5,8 +5,9 @@
 /*
 Category Class
 parameters:
-  -elements: list of MapObjects or geoJSON objects
-  -icon: ol json formatting for image to display
+  -elements: array of MapObjects or geoJSON objects
+  -title: name of element grouping
+  -style: ol3 object for styling data  (see defaultMarkerStyle)
 methods:
 vectorSource() - returns an openlayers3 vector containing the category features
 features() - returns a list containing the category features
@@ -27,7 +28,7 @@ function Category(elements,title,style) {
     /*==========================================*/
     //public variables
     /*==========================================*/
-    this.visible = true;
+    this.visible = true; //should the group be visible
     this.title = title || guid();
     this.elements = elements || [];
     //process marker style json
@@ -94,6 +95,7 @@ function Category(elements,title,style) {
     add --  validates & appends a MapObject to the category's elements array
     */
     this.add = function(mapobj) {
+        //TODO: add validation 
         this.elements.push(mapobj);
     };
     /*

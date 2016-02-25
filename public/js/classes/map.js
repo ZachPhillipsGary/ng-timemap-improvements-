@@ -16,7 +16,7 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
     */
     this.categories = [];
     /*
-    The data parameter can either be an array of Categories or a single Category. 
+    The data parameter can either be an array of Categories or a single Category.
     The mapObjects variable stores an array of openlayers objects holding the map layers and basemap objects
     */
     this.mapObjects = [];
@@ -28,9 +28,13 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
     generateOlLayers() -- Creates ol layers vector objects for map from Category or array of Category objects and loads them into map objects
     */
     this.generateOlLayers = function() {
-        //add osm layer
+        //add osm layernew ol.layer.Tile({
+  var mapSource =  new ol.source.Stamen({
+    layer: 'toner'
+  });
+
         this.mapObjects.push(new ol.layer.Tile({
-            source: new ol.source.OSM(),
+            source: mapSource,
 
         }));
         if (data.constructor === Array) {
@@ -38,6 +42,7 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
                 var layer = data[i].vectorLayer();
                 layer.kind = "Category";
                 layer.tmid = i; //create unique id for access when updating
+                console.log(layer.getStyle());
                 this.mapObjects.push(layer);
                 this.mapData[i] = data[i];
             };
@@ -65,9 +70,9 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
                                     if(tag  === 'Show All') {
                                         this.mapData[i].elements[l].visible = true;
                                     } else {
-                                        if(this.mapData[i].elements[l].tags[k] != tag) 
+                                        if(this.mapData[i].elements[l].tags[k] != tag)
                                                 this.mapData[i].elements[l].visible = false;
-                                            else 
+                                            else
                                                 this.mapData[i].elements[l].visible = true;
                                         }
                                }
@@ -139,7 +144,7 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
 
         }
         /*==========================================*/
-        //initialize map 
+        //initialize map
         /*==========================================*/
 
     /*
@@ -191,9 +196,9 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
                 rotation: rotation,
             })
         });
-        //add tooltips 
+        //add tooltips
         $('[data-toggle="tooltip"]').tooltip();
-        
+
         //add a click event listener
         this.m.on('singleclick', function(evt) {
             var coordinates = this.m.getEventCoordinate(evt.originalEvent);

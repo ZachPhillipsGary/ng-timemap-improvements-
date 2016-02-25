@@ -159,7 +159,7 @@ var defaultJSONStyle = {
     this.getTimelineObject = function() {
         var visObject = {}; //API description @ http://visjs.org/docs/timeline/
         visObject.latlon = "geoJSON"; 
-        //is the object a point or line on the timeline?
+        //is the object a point or line on the time line?
         if (this.startDate === this.endDate) {
             visObject.type = 'point';
          } else {
@@ -171,6 +171,6 @@ var defaultJSONStyle = {
         visObject.start = new Date(this.startDate[2],this.startDate[1],this.startDate[0]);
         return [visObject]; //expected as an array
     };
-    /* initalize */
+    /* initialize */
     this.add(json);
 }
