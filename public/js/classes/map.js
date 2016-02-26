@@ -208,7 +208,6 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
             */
             if (this.parent.edit)
                 this.parent.newMarker = coordinates;
-
         }, this);
         var shouldUpdate = true;
         var view = this.m.getView();
@@ -271,9 +270,12 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
 
             }
             /*==========================================*/
-            //moveToPoint() -- pans map to inputted ol.point coords
+            //moveToPoint() -- pans map to inputted ol.point coords and displays html
             /*==========================================*/
         this.moveToPoint = function(location, html) {
+          if (debug) console.log(location);
+          //validate input
+          if (Array.isArray ( location ) ) {
             // var  = ol.proj.transform(latlon, 'EPSG:4326', 'EPSG:3857');
             // bounce by zooming out one level and back in
             var bounce = ol.animation.bounce({
@@ -296,7 +298,7 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
                 function(feature, layer) {
                     return feature;
                 });
-            console.log(feature)
+        if(debug)    console.log(feature);
             if (feature) {
                 popup.setPosition(location);
                 $(element).popover({
@@ -308,6 +310,7 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
             } else {
                 $(element).popover('destroy');
             }
+          }
         };
         /*==========================================*/
         //update() -- redraws map
