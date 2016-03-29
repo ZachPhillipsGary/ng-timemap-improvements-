@@ -29,22 +29,30 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
     */
     this.generateOlLayers = function() {
         //add osm layernew ol.layer.Tile({
-  var mapSource =  new ol.source.Stamen({
+/*  var mapSource =  new ol.source.Stamen({
     layer: 'toner'
   });
-
-        this.mapObjects.push(new ol.layer.Tile({
+  */
+var mapSource =  new ol.source.OSM();
+      /*  this.mapObjects.push(new ol.layer.Tile({
             source: mapSource,
 
         }));
+*/
         if (data.constructor === Array) {
+           if (debug) console.log(data);
             for (var i = data.length - 1; i >= 0; i--) {
                 var layer = data[i].vectorLayer();
+                if (debug) console.log(layer);
+                if (typeof layer !== 'undefined' ) {
                 layer.kind = "Category";
                 layer.tmid = i; //create unique id for access when updating
-                console.log(layer.getStyle());
                 this.mapObjects.push(layer);
-                this.mapData[i] = data[i];
+                this.mapData.push(data[i]);
+                console.log(data[i]);
+              } else {
+                console.log('invalid',layer);
+              }
             };
         } else {
             //only a single data element exists
@@ -86,12 +94,12 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
         drawFilter -- generates html for filter
         */
     this.drawFilter = function() {
+      console.log(this.mapData);
             /* Create UI and start event listeners for category filters */
             //inject select zone
             var location = document.getElementById("filters");
             var htmlToReturn = "";
             htmlToReturn += "<select id='" + renderlocation + '_filters' + "' multiple='multiple' >";
-
             for (var i = this.mapData.length - 1; i >= 0; i--) {
                 htmlToReturn += "<option value='" + i + "'>" + this.mapData[i].title + "</option>";
 
@@ -202,6 +210,7 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
         //add a click event listener
         this.m.on('singleclick', function(evt) {
             var coordinates = this.m.getEventCoordinate(evt.originalEvent);
+            console.log(coordinates[0], coordinates[1]);
             console.log(ol.proj.transform([coordinates[0], coordinates[1]], 'EPSG:3857', new ol.source.OSM().getProjection()));
             /*
             If instance is in edit mode

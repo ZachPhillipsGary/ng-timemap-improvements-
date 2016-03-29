@@ -1,12 +1,12 @@
 /*
 Local geoJSON Category Object Class
 notes:
-geoJSON features themselves DO NOT have individual tags 
+geoJSON features themselves DO NOT have individual tags
 parameters:
   -json: json string for object
   -jsonstyle ol style object for json defined features
-  -startDate: array of strings containing year, month and day 
-  -endDate: array of strings containing year, month and day 
+  -startDate: array of strings containing year, month and day
+  -endDate: array of strings containing year, month and day
   -icon: html markup for description / icon
   -tags: array of strings
   -visible: should this object be rendered
@@ -91,7 +91,7 @@ var defaultJSONStyle = {
 };
     /* Declare public variables */
     this.title = title || '';
-    this.kind = "geoJSONLayer"; 
+    this.kind = "geoJSONLayer";
     this.startDate = startDate || [];
     this.endDate = endDate || [];
     this.tags = tags || [];
@@ -131,19 +131,19 @@ var defaultJSONStyle = {
         if( this.startDate.length === 3 )
             returnObject.start = new Date(this.startDate[2],this.startDate[1],this.startDate[0]);
         //date format = "Wed Mar 25 2015 01:00:00 GMT+0100 (W. Europe Standard Time)"
-        else if( this.startDate.length === 1 ) 
+        else if( this.startDate.length === 1 )
             returnObject.start = new Date(this.startDate[0]);
         else
             alert("Error: Unsupported start date format on layer:" + this.title);
     } else {
         alert("Error Date undefined on:" + this.title);
-    }  
-        //markers without without an end date are allowed, but don't return an end 
+    }
+        //markers without without an end date are allowed, but don't return an end
     if(!(typeof(this.endDate) === 'undefined')) {
         if( this.endDate.length == 3 )
             returnObject.end = new Date(this.endDate[2],this.endDate[1],this.endDate[0]);
         //date format = Wed Mar 25 2015 01:00:00 GMT+0100 (W. Europe Standard Time)
-        else if( this.endDate.length == 1 ) 
+        else if( this.endDate.length == 1 )
             returnObject.end = new Date(this.endDate[0]);
         else
             alert("Error: Unsupported end date format on layer:" + this.title);
@@ -158,7 +158,7 @@ var defaultJSONStyle = {
     }
     this.getTimelineObject = function() {
         var visObject = {}; //API description @ http://visjs.org/docs/timeline/
-        visObject.latlon = "geoJSON"; 
+        visObject.latlon = "geoJSON";
         //is the object a point or line on the time line?
         if (this.startDate === this.endDate) {
             visObject.type = 'point';

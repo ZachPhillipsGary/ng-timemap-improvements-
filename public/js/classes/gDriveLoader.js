@@ -1,7 +1,7 @@
 function gDriveLoader(key, onComplete, parent) {
     /*
     The schema object contains the ajax response property names which
-    correspond to ng-TimeMap's MapObject class constructor parameters 
+    correspond to ng-TimeMap's MapObject class constructor parameters
     */
     var schema = {
         "itemtype": "gsx$type",
@@ -44,6 +44,11 @@ function gDriveLoader(key, onComplete, parent) {
         } else {
             if ((object.itemtype.trim() === "layer") || (object.itemtype.trim() === "↵layer")) {
                 return new RemoteLayer(object["html"], object["format"], object["title"], object["startDate"].split('/'), object["endDate"].split('/'), object["tags"].split(','), guid());
+            } else  if ((object.itemtype.trim() === "image") || (object.itemtype.trim() === "↵image")) {
+              return new StaticImageLayer(object["latitude"], object["longitude"], object["html"], object["image"], object["title"], object["startDate"].split('/'), object["endDate"].split('/'), object["tags"].split(','), guid());
+            }
+            if ((object.itemtype.trim() === "heatmap") || (object.itemtype.trim() === "↵heatmap")) {
+                            return new HeatMap(object["html"]);
             }
             var output = '';
             for (var property in gdriveentry) {
@@ -73,13 +78,13 @@ function gDriveLoader(key, onComplete, parent) {
                             else if (convertRow.constructor.name === "Category")
                                 categories[convertRow.title].add(convertRow)
                                 /* Remote layers are themselves categories */
-                        } else if (convertRow.constructor.name === "RemoteLayer")
+                        } else if ((convertRow.constructor.name === "RemoteLayer") || convertRow.constructor.name === "StaticImageLayer")
                             returnData.push(convertRow);
                         /* Add categories to return array */
                         for (var category in categories)
                             returnData.push(categories[category]);
                     };
-                //call the onComplete function and pass the returned Data back 
+                //call the onComplete function and pass the returned Data back
                 onComplete(parent, returnData);
             }
         })

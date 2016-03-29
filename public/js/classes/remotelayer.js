@@ -18,7 +18,7 @@ methods:
 */
 function RemoteLayer(url, type, title, startDate, endDate, tags, uniqueid) {
     /* Check that remote file exists and is of proper format*/
-    if (!((typeof type === "string") && ((type === 'GeoJSON') || (type === 'KML')))) {
+    if (!((typeof type === "string") && ((type === 'GeoJSON') || (type === 'KML') || (type === 'image')))) {
         alert('Error:'+title+"is an invalid type.");
       }
         /*==========================================*/
@@ -189,7 +189,6 @@ function RemoteLayer(url, type, title, startDate, endDate, tags, uniqueid) {
                         format: new ol.format.KML()
                     })
                 });
-
             if (this.type === 'GeoJSON') {
                 //get style info from the GeoJSON file and generate ol style object for it
                 var styleProperties = {}; // temp var for geojson
@@ -210,11 +209,22 @@ function RemoteLayer(url, type, title, startDate, endDate, tags, uniqueid) {
                                 var currentObject = styleProperties[capitaliseFirstLetter(featureStyle)];
                                 console.log('currentObject',currentObject);
                                 const featureName = capitaliseFirstLetter(featureStyle);
-                                if (styles.hasOwnProperty(featureName)) {
+                                if (styles.hasOwnProperty("featureName")) {
+                                  if (currentObject.properties.hasOwnProperty(stroke)) {
+                                  var colorVal =  hexToRgb(currentObject.properties);
+                                } else {
+                                  var letters = '0123456789ABCDEF'.split('');
+var color = '#';
+for (var i = 0; i < 6; i++ ) {
+color += letters[Math.floor(Math.random() * 16)];
+}
+                                  var colorVal = hexToRgb(color);
+                                }
+
                                         styles[featureName] = new ol.style.Style({
                                                 stroke: new ol.style.Stroke({
-                                                    color: hexToRgb(currentObject.properties.stroke),
-                                                    width: currentObject.properties['stroke-width']
+                                                 color: colorVal,
+                                                  width: currentObject.properties['stroke-width']
                                                 }),
                                                 fill: new ol.style.Fill({
                                                     color: hexToRgb(currentObject.properties.fill)
@@ -291,4 +301,156 @@ function RemoteLayer(url, type, title, startDate, endDate, tags, uniqueid) {
                     return [visObject]; //expected as an array
                 };
 
-            }
+            };
+/*
+Renders a static image
+*/
+function StaticImageLayer(latitude, longitude, url, settings, title, startDate, endDate, tags, uniqueid) {
+const latitudes = latitude.split(',');
+const longitudes = longitude.split(',');
+//longitude (decimal) EPSG:4326
+if (latitudes.length != longitudes.length) {
+  alert('error: invalid input');
+}
+this.url = url;
+if (settings.length > 1)
+    this.settings = $.parseJSON(settings);
+else
+    alert('Invalid settings column on'+url+title);
+console.log(latitudes,longitudes);
+this.title =  title;
+this.startDate = startDate || [];
+this.endDate = endDate || [];
+this.tags = tags || [];
+this.url = url;
+this.elements = [this];
+this.visible = true;
+//Pubic methods
+this.vectorSource = function() {
+  return new ol.source.ImageStatic({
+        attributions: [
+            new ol.Attribution({
+                html: '&copy '+String(this.url)
+            })
+        ],
+        url: this.url,
+        imageSize: [960,1000],//[parseFloat(this.settings.height), parseFloat(this.settings.width)],
+        projection: "EPSG:3857",
+        imageExtent: [4723196.851797611, 4459030.482044041,-2759070.9729817216, 10077457.80911763]//[parseFloat(latitudes[0]), parseFloat(longitudes[0]), parseFloat(latitudes[1]), parseFloat(longitudes[1])]
+    //   imageExtent: ol.extent.applyTransform([-74.22655, 40.71222, -74.12544, 40.77394], ol.proj.getTransform("EPSG:4326", "EPSG:3857"))
+    });
+};
+this.features = function() {
+    /*
+    For future use.
+    */
+    return this.elements.cus_unique();
+}
+this.vectorLayer = function() {
+  var imageLayer = new ol.layer.Image({
+                opacity: 0.75,
+                source: this.vectorSource()
+            });
+return imageLayer;
+};
+this.getTags = function() {
+    return this.tags.cus_unique(); //return an array of unique tags
+}
+  this.getTimelineObject = function() {
+      var visObject = {}; //API description @ http://visjs.org/docs/timeline/
+      visObject.latlon = this.type; // so the system knows this is a layer file
+      //is the object a point or line on the timeline?
+      if (this.startDate === this.endDate) {
+          visObject.type = 'point';
+      } else {
+          if (this.endDate.length === 3) {
+              visObject.end = new Date(this.endDate[2], this.endDate[1], this.endDate[0]);
+          };
+      }
+      visObject.content = title;
+      visObject.start = new Date(this.startDate[2], this.startDate[1], this.startDate[0]);
+      return [visObject]; //expected as an array
+  };
+  this.getDates = function() {
+      var returnObject = {
+          start: new Date()
+      };
+      if (!(typeof(this.startDate) === 'undefined')) {
+          //date format = mm/dd/yyyy
+          if (this.startDate.length === 3)
+              returnObject.start = new Date(this.startDate[2], this.startDate[1], this.startDate[0]);
+          //date format = "Wed Mar 25 2015 01:00:00 GMT+0100 (W. Europe Standard Time)"
+          else if (this.startDate.length === 1)
+              returnObject.start = new Date(this.startDate[0]);
+          else
+              alert("Error: Unsupported start date format on layer:" + this.title);
+      } else {
+          alert("Error Date undefined on:" + this.title);
+      }
+      //markers without without an end date are allowed, but don't return an end
+      if (!(typeof(this.endDate) === 'undefined')) {
+          if (this.endDate.length == 3)
+              returnObject.end = new Date(this.endDate[2], this.endDate[1], this.endDate[0]);
+          //date format = Wed Mar 25 2015 01:00:00 GMT+0100 (W. Europe Standard Time)
+          else if (this.endDate.length == 1)
+              returnObject.end = new Date(this.endDate[0]);
+          else
+              alert("Error: Unsupported end date format on layer:" + this.title);
+      }
+      return returnObject;
+  };
+};
+function HeatMap(url) {
+this.url = url;
+var blur = 20;
+var radius = 20;
+this.elements = [this];
+this.vectorSource =  function() {
+  return new ol.source.Vector({
+    url: this.URL,
+    projection: "EPSG:3857",
+    format: new ol.format.KML({
+      extractStyles: false
+    })
+});
+}
+this.vectorLayer =  function () {
+var vector = new ol.layer.Heatmap({
+  source: this.vectorSource(),
+  blur: parseInt(blur, 10),
+  radius: parseInt(radius, 10)
+});
+//addEventListener compute feature properties on insertion, 
+vector.getSource().on('addfeature', function(event) {
+  // 2012_Earthquakes_Mag5.kml stores the magnitude of each earthquake in a
+  // standards-violating <magnitude> tag in each Placemark.  We extract it from
+  // the Placemark's name instead.
+  const featureDateRaw = event.feature["id_"];
+  //process date into valid format
+  const dateParts = featureDateRaw.split(" ");
+  const month  = "JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(dateParts[1]) / 3 + 1; // convert month string into number
+  const date = new Date(dateParts[0],Math.round(month),dateParts[2]);
+    var name = event.feature.get('name');
+    var magnitude = parseFloat(name.substr(2));
+    console.log(magnitude);
+    event.feature.set('weight', magnitude*100 - 5);
+
+});
+return vector;
+};
+const layerSource = this.vectorSource();
+layerSource.forEachFeature(function(parameter) {
+  console.log(parameter);
+},this);
+/*
+const layerSource = this.vectorSource();
+var firstDate;
+var lastDate;
+layerSource.forEachFeature(function(parameter) {
+  console.log(parameter);
+},this);
+*/
+this.getDates = function() {
+return [{}];
+}
+};
