@@ -16,7 +16,7 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
     */
     this.categories = [];
     /*
-    The data parameter can either be an array of Categories or a single Category. 
+    The data parameter can either be an array of Categories or a single Category.
     The mapObjects variable stores an array of openlayers objects holding the map layers and basemap objects
     */
     this.mapObjects = [];
@@ -28,18 +28,31 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
     generateOlLayers() -- Creates ol layers vector objects for map from Category or array of Category objects and loads them into map objects
     */
     this.generateOlLayers = function() {
-        //add osm layer
-        this.mapObjects.push(new ol.layer.Tile({
-            source: new ol.source.OSM(),
+        //add osm layernew ol.layer.Tile({
+/*  var mapSource =  new ol.source.Stamen({
+    layer: 'toner'
+  });
+  */
+var mapSource =  new ol.source.OSM();
+      /*this.mapObjects.push(new ol.layer.Tile({
+            source: mapSource,
 
-        }));
+        }));*/
+
         if (data.constructor === Array) {
+           if (debug) console.log(data);
             for (var i = data.length - 1; i >= 0; i--) {
                 var layer = data[i].vectorLayer();
+                if (debug) console.log(layer);
+                if (typeof layer !== 'undefined' ) {
                 layer.kind = "Category";
                 layer.tmid = i; //create unique id for access when updating
                 this.mapObjects.push(layer);
-                this.mapData[i] = data[i];
+                this.mapData.push(data[i]);
+                console.log(data[i]);
+              } else {
+                console.log('invalid',layer);
+              }
             };
         } else {
             //only a single data element exists
@@ -65,9 +78,9 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
                                     if(tag  === 'Show All') {
                                         this.mapData[i].elements[l].visible = true;
                                     } else {
-                                        if(this.mapData[i].elements[l].tags[k] != tag) 
+                                        if(this.mapData[i].elements[l].tags[k] != tag)
                                                 this.mapData[i].elements[l].visible = false;
-                                            else 
+                                            else
                                                 this.mapData[i].elements[l].visible = true;
                                         }
                                }
@@ -81,12 +94,12 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
         drawFilter -- generates html for filter
         */
     this.drawFilter = function() {
+      console.log(this.mapData);
             /* Create UI and start event listeners for category filters */
             //inject select zone
             var location = document.getElementById("filters");
             var htmlToReturn = "";
             htmlToReturn += "<select id='" + renderlocation + '_filters' + "' multiple='multiple' >";
-
             for (var i = this.mapData.length - 1; i >= 0; i--) {
                 htmlToReturn += "<option value='" + i + "'>" + this.mapData[i].title + "</option>";
 
@@ -139,15 +152,15 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
 
         }
         /*==========================================*/
-        //initialize map 
+        //initialize map
         /*==========================================*/
 
     /*
     Declare Private Vars
     */
     // default zoom, center and rotation
-    var zoom = 2;
-    var center = [0, 0];
+    var zoom = 3;
+    var center = [-153764395.08, 3150428.56];
     var rotation = 0;
     if (typeof initialmapstate !== "undefined") {
         zoom = initialmapstate.zoom || zoom;
@@ -191,19 +204,19 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
                 rotation: rotation,
             })
         });
-        //add tooltips 
+        //add tooltips
         $('[data-toggle="tooltip"]').tooltip();
-        
+
         //add a click event listener
         this.m.on('singleclick', function(evt) {
             var coordinates = this.m.getEventCoordinate(evt.originalEvent);
+            console.log(coordinates[0], coordinates[1]);
             console.log(ol.proj.transform([coordinates[0], coordinates[1]], 'EPSG:3857', new ol.source.OSM().getProjection()));
             /*
             If instance is in edit mode
             */
             if (this.parent.edit)
                 this.parent.newMarker = coordinates;
-
         }, this);
         var shouldUpdate = true;
         var view = this.m.getView();
@@ -266,9 +279,12 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
 
             }
             /*==========================================*/
-            //moveToPoint() -- pans map to inputted ol.point coords
+            //moveToPoint() -- pans map to inputted ol.point coords and displays html
             /*==========================================*/
         this.moveToPoint = function(location, html) {
+          if (debug) console.log(location);
+          //validate input
+          if (Array.isArray ( location ) ) {
             // var  = ol.proj.transform(latlon, 'EPSG:4326', 'EPSG:3857');
             // bounce by zooming out one level and back in
             var bounce = ol.animation.bounce({
@@ -291,7 +307,7 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
                 function(feature, layer) {
                     return feature;
                 });
-            console.log(feature)
+        if(debug)    console.log(feature);
             if (feature) {
                 popup.setPosition(location);
                 $(element).popover({
@@ -303,6 +319,7 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
             } else {
                 $(element).popover('destroy');
             }
+          }
         };
         /*==========================================*/
         //update() -- redraws map

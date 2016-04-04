@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-      <script src="http://www.zachs.space/tm/js/classes/gDriveSelector.js"></script>
+      <script src="/js/classes/gDriveSelector.js"></script>
       <script src="//apis.google.com/js/client.js?onload=checkAuth">
     </script>
 
@@ -89,16 +89,16 @@ height:200px;
         var iframe = "<iframe src=\""+URL+"\"+height=\""+height+"\" width=\""+width+"\"><p>Your browser does not support iframes.</p><a href=\""+URL+"\">Click here to view the content</a></iframe>";
 $("#HTML").val(iframe);
 $("#preview").html(iframe);
-      } 
+      }
         $(document).ready(function() {
       $(".resizable").resizable({
         handles: {
             'n': '#handle'
         }
-        
+
       });
       $( "#googleSheets" ).change(function() {
-          var val = $("#googleSheets").val() 
+          var val = $("#googleSheets").val()
           if(typeof val === 'string')
                 window.location = window.location.origin+val;
         });
@@ -108,22 +108,22 @@ $("#preview").html(iframe);
     $( "#width" ).change(function() {
             generateEmbedCodes()
       });
-    generateEmbedCodes();
+        generateEmbedCodes();
         });
     </script>
     <!-- begin ng-timemap includes  -->
      <script src="//cdnjs.cloudflare.com/ajax/libs/vis/4.11.0/vis.min.js"></script>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/vis/4.11.0/vis.min.css" type="text/css">
     <link rel="stylesheet" href="http://openlayers.org/en/v3.12.1/css/ol.css" type="text/css">
-    <script src="http://openlayers.org/en/v3.12.1/build/ol.js"></script>
-      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"> 
+    <script src="http://openlayers.org/en/v3.12.1/build/ol-debug.js"></script>
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
         <script type="text/javascript"
     src="//code.jquery.com/ui/1.12.0-beta.1/jquery-ui.min.js"></script>
     <!-- Optional theme -->
-  
+
     <!-- Latest compiled and minified JavaScript -->
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <link href="./plugins/css/multi-select.css" media="screen" rel="stylesheet" type="text/css">
@@ -145,11 +145,11 @@ $("#preview").html(iframe);
 <div class="container-fluid" id="getStartedMenu">
   <h1>ng-TimeMap <i>alpha</i></h1>
   <h3>A javascript library for showing information from a Google Spreadsheet simultaneously on a map and timeline.</h3>
-  
+
   <div id="authorize-div" style="display: none">
      <button  data-toggle="tooltip" title="To edit or load spreadsheets, ng-TimeMap must have access to your Google Drive account." type="button" class="btn btn-danger btn-block" id="authorize-button" onclick="handleAuthClick(event)">Authorize access to Google Drive</button>
 </div>
-   
+
   <a href="//drive.google.com/previewtemplate?id=1a2-xinkwgp35KlPPm7blqRjzFjhCfNw-HJsN8Bi7ruA&mode=public" type="button" class="btn btn-default btn-md">Get the Spreadsheet Template</a> or
      <select name="googleSheets" id="googleSheets">
       <option>Load a Spreadsheet from your Google Drive account</option>
@@ -160,9 +160,9 @@ $("#preview").html(iframe);
   <ul class="nav navbar-nav">
     <li class="active"><a href="#">View</a></li>
     <li><a href="./edit/"><i class="fa fa-pencil"></i> Edit (coming soon)</a></li>
-    <li><a href="//zachphillipsgary.github.io/ng-timemap-improvements-/"><i class="fa fa-question-circle"></i> 
+    <li><a href="//zachphillipsgary.github.io/ng-timemap-improvements-/"><i class="fa fa-question-circle"></i>
 Help</a></li>
-    <li><a href="#"  data-toggle="modal" data-target="#EmbeddableTM"><i class="fa fa-bullhorn"></i>  
+    <li><a href="#"  data-toggle="modal" data-target="#EmbeddableTM"><i class="fa fa-bullhorn"></i>
 Share</a></li>
     <li><a href="//github.com/ZachPhillipsGary/ng-timemap-improvements-"><i class="fa fa-github-alt"></i> GitHub</a></li>
 
@@ -182,12 +182,14 @@ Share</a></li>
 </div>
 <!-- begin loading  timemap libraries -->
 <!-- Begin JS includes -->
+    <script src="./js/classes/imagelayer.js"></script>
     <script src="./plugins/js/jquery.multi-select.js" type="text/javascript"></script>
     <script src="./js/classes/gDriveSelector.js"></script>
     <script src="./js/classes/gDriveLoader.js"></script>
     <script src="./js/lib/overloads.js"></script>
     <script src="./js/classes/ui.js"></script>
     <script src="./js/classes/marker.js"></script>
+    <!--<script src="./js/classes/heatmap.js"></script>-->
     <script src="./js/classes/geojsonlayer.js"></script>
     <script src="./js/classes/makerset.js"></script>
     <script src="./js/classes/remotelayer.js"></script>
@@ -204,11 +206,11 @@ Share</a></li>
         app.key = getURLParameter('key');
         if (typeof app.key !== "string") {
           //try once to get a valid key
-            app.key = prompt("Error: Could not find map to load.", "Enter the key of the Google Drive Spreadsheet below to continue:");
+          //  app.key = prompt("Error: Could not find map to load.", "Enter the key of a Google Drive Spreadsheet here to continue:");
             //add the inserted key into the url
             insertParam("key",app.key);
         }
-            
+
         //create a time-map instance
         app.mytimeline = new timemap(app, {
             'map': 'map',
@@ -220,7 +222,7 @@ Share</a></li>
   <!-- Modal -->
   <div class="modal fade" id="EmbeddableTM" role="dialog">
     <div class="modal-dialog">
-    
+
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
@@ -247,10 +249,10 @@ Share</a></li>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
-      
+
     </div>
   </div>
-  
+
 </div>
 
 </body>
