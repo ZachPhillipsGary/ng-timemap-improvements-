@@ -34,11 +34,11 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
   });
   */
 var mapSource =  new ol.source.OSM();
-      /*  this.mapObjects.push(new ol.layer.Tile({
+      /*this.mapObjects.push(new ol.layer.Tile({
             source: mapSource,
 
-        }));
-*/
+        }));*/
+
         if (data.constructor === Array) {
            if (debug) console.log(data);
             for (var i = data.length - 1; i >= 0; i--) {
@@ -159,8 +159,8 @@ var mapSource =  new ol.source.OSM();
     Declare Private Vars
     */
     // default zoom, center and rotation
-    var zoom = 2;
-    var center = [0, 0];
+    var zoom = 3;
+    var center = [-153764395.08, 3150428.56];
     var rotation = 0;
     if (typeof initialmapstate !== "undefined") {
         zoom = initialmapstate.zoom || zoom;

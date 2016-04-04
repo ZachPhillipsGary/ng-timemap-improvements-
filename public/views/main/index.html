@@ -206,7 +206,7 @@ Share</a></li>
         app.key = getURLParameter('key');
         if (typeof app.key !== "string") {
           //try once to get a valid key
-            app.key = prompt("Error: Could not find map to load.", "Enter the key of a Google Drive Spreadsheet here to continue:");
+          //  app.key = prompt("Error: Could not find map to load.", "Enter the key of a Google Drive Spreadsheet here to continue:");
             //add the inserted key into the url
             insertParam("key",app.key);
         }
