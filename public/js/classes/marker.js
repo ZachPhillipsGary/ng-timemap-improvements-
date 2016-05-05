@@ -28,12 +28,12 @@ function MapObject(lat, log, title, startDate, endDate, icon, tags, html) {
     this.html = html || ""; //html for popup balloon 
     //object methods
     this.LonLat = function() {
-        return new ol.proj.transform([this.lon, this.lat], 'EPSG:4326', 'EPSG:3857')
+        return new ol.proj.transform([this.lon, this.lat], 'EPSG:3857', 'EPSG:3857')
     };
     this.getFeature = function() {
         if (this.visible)
             var iconFeature = new ol.Feature({
-                geometry: new ol.geom.Point(ol.proj.transform([this.lon, this.lat], 'EPSG:4326', 'EPSG:3857')),
+                geometry: new ol.geom.Point(ol.proj.transform([this.lon, this.lat], 'EPSG:3857', 'EPSG:3857')),
                 name: this.title,
                 html: this.html,
                 visible: this.visible,

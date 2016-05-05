@@ -34,10 +34,10 @@ function Map(timemap_instance, data, renderlocation, initialmapstate, debug) {
   });
   */
 var mapSource =  new ol.source.OSM();
-      /*this.mapObjects.push(new ol.layer.Tile({
+      this.mapObjects.push(new ol.layer.Tile({
             source: mapSource,
 
-        }));*/
+        }));
 
         if (data.constructor === Array) {
            if (debug) console.log(data);
